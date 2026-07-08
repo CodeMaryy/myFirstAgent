@@ -1,0 +1,17 @@
+# 环境变量（包含 API Key，绝不能提交）
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# uv
+.venv/
+uv.lock
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
