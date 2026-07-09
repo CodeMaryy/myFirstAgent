@@ -3,8 +3,8 @@ ReAct Agent 入口文件
 运行方式：uv run python 02_react_agent/main.py
 """
 
-from llm import LLMClient
-from tools import ToolRegistry, calculator, fake_search
+from common.llm import LLMClient
+from tools import ToolRegistry, calculator, get_weather
 from react_agent import ReActAgent
 
 
@@ -20,9 +20,9 @@ def main():
         calculator,
     )
     registry.register(
-        "Search",
-        "搜索引擎，搜索实时信息（如天气、新闻等）",
-        fake_search,
+        "Weather",
+        "天气查询工具，输入城市名（如北京、上海）返回当前天气信息",
+        get_weather,
     )
 
     # 3. 创建 ReAct Agent

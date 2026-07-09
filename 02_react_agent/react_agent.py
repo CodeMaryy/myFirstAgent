@@ -7,7 +7,7 @@ ReAct Agent：推理（Reasoning）+ 行动（Acting）
 """
 
 import re
-from llm import LLMClient
+from common.llm import LLMClient
 from tools import ToolRegistry
 
 

@@ -3,6 +3,7 @@
 ReAct Agent 通过工具来"行动"，获取外部信息
 """
 
+import requests
 from typing import Dict, Any, Callable, Optional
 
 
@@ -62,26 +63,72 @@ def calculator(expression: str) -> str:
     return f"{expression} = {result}"
 
 
-def fake_search(query: str) -> str:
+# 城市名 → 经纬度的映射（Open-Meteo 需要经纬度来查天气）
+CITY_COORDS = {
+    "北京": (39.9042, 116.4074),
+    "上海": (31.2304, 121.4737),
+    "广州": (23.1291, 113.2644),
+    "深圳": (22.5431, 114.0579),
+    "成都": (30.5728, 104.0668),
+    "杭州": (30.2741, 120.1551),
+    "武汉": (30.5928, 114.3055),
+    "西安": (34.3416, 108.9398),
+    "南京": (32.0603, 118.7969),
+    "重庆": (29.5630, 106.5516),
+    "天津": (39.3434, 117.3616),
+    "苏州": (31.2989, 120.5853),
+}
+
+
+def get_weather(city: str) -> str:
     """
-    模拟搜索工具（不调真实 API，返回预设结果）
-    输入：搜索关键词
-    输出：搜索结果
+    天气查询工具：调用 Open-Meteo 免费 API 获取真实天气
+    输入：城市名（如 "北京"、"上海"）
+    输出：当前温度、风速、天气状况
     """
-    # 预设一些"搜索结果"，让 Agent 能用
-    mock_data = {
-        "北京天气": "北京今天 25 度，晴",
-        "上海天气": "上海今天 28 度，多云",
-        "美团": "美团是中国领先的生活服务电子商务平台",
-        "deepseek": "DeepSeek 是一家中国 AI 公司，专注大模型研发",
+    city = city.strip()
+
+    # 查找城市经纬度
+    coords = CITY_COORDS.get(city)
+    if not coords:
+        return f"未找到城市 '{city}'，目前支持查询的城市：{'、'.join(CITY_COORDS.keys())}"
+
+    lat, lon = coords
+
+    # 调用 Open-Meteo API（免费、无需 API Key）
+    url = "https://api.open-meteo.com/v1/forecast"
+    params = {
+        "latitude": lat,
+        "longitude": lon,
+        "current": "temperature_2m,wind_speed_10m,weather_code",
+        "timezone": "Asia/Shanghai",
     }
 
-    # 模糊匹配
-    for key, value in mock_data.items():
-        if key in query:
-            return value
+    try:
+        resp = requests.get(url, params=params, timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+    except Exception as e:
+        return f"查询天气失败: {e}"
 
-    return f"搜索 '{query}' 未找到相关结果"
+    # 解析天气数据
+    current = data.get("current", {})
+    temp = current.get("temperature_2m", "未知")
+    wind = current.get("wind_speed_10m", "未知")
+    code = current.get("weather_code", 0)
+
+    # weather_code 转中文描述（WMO 标准简化版）
+    weather_desc = {
+        0: "晴", 1: "晴", 2: "多云", 3: "阴",
+        45: "雾", 48: "雾",
+        51: "小雨", 53: "小雨", 55: "中雨",
+        61: "小雨", 63: "中雨", 65: "大雨",
+        71: "小雪", 73: "中雪", 75: "大雪",
+        80: "阵雨", 81: "阵雨", 82: "暴雨",
+        95: "雷暴", 96: "雷暴", 99: "雷暴",
+    }.get(code, f"未知(代码{code})")
+
+    return f"{city}：当前温度 {temp}°C，{weather_desc}，风速 {wind} km/h"
 
 
 # ============================================================
@@ -90,7 +137,7 @@ def fake_search(query: str) -> str:
 if __name__ == "__main__":
     registry = ToolRegistry()
     registry.register("Calculator", "数学计算器，输入数学表达式返回结果", calculator)
-    registry.register("Search", "搜索引擎，搜索实时信息", fake_search)
+    registry.register("Weather", "天气查询工具，输入城市名返回当前天气信息", get_weather)
 
     print("\n--- 工具描述 ---")
     print(registry.description())
@@ -98,5 +145,5 @@ if __name__ == "__main__":
     print("\n--- 测试计算器 ---")
     print(registry.execute("Calculator", "2 + 3 * 4"))
 
-    print("\n--- 测试搜索 ---")
-    print(registry.execute("Search", "北京天气"))
+    print("\n--- 测试天气 ---")
+    print(registry.execute("Weather", "北京"))
