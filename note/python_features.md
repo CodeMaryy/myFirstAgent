@@ -13,9 +13,9 @@
 
 | # | 特性 | AI 应用场景 | 练习文件 | 状态 |
 |---|------|-------------|---------|------|
-| 1 | `async` / `await` 协程 | 并发调用多个 LLM / 多数据源搜索 | [01_async_demo.py](python_practice/01_async_demo.py) | ⬜ |
-| 2 | `yield` 生成器 | LLM 流式输出（打字机效果） | [02_yield_stream.py](python_practice/02_yield_stream.py) | ⬜ |
-| 3 | 装饰器 `@decorator` | LLM 调用耗时统计 / 失败重试 / 工具注册 | [03_decorator.py](python_practice/03_decorator.py) | ⬜ |
+| 1 | `async` / `await` 协程 | 并发调用多个 LLM / 多数据源搜索 | [01_async_demo.ipynb](python_practice/01_async_demo.ipynb) | ⬜ |
+| 2 | `yield` 生成器 | LLM 流式输出（打字机效果） | [02_yield_stream.ipynb](python_practice/02_yield_stream.ipynb) | ⬜ |
+| 3 | 装饰器 `@decorator` | LLM 调用耗时统计 / 失败重试 / 工具注册 | [03_decorator.ipynb](python_practice/03_decorator.ipynb) | ⬜ |
 | 4 | `with` 上下文管理器 | API 连接、文件读写 | 已在项目中使用 | ✅ |
 | 5 | 类型注解 `List[str] / Dict` | 函数签名、代码可读性 | 已在 `04_rag` 中使用 | ✅ |
 
@@ -23,8 +23,8 @@
 
 | # | 特性 | AI 应用场景 | 练习文件 | 状态 |
 |---|------|-------------|---------|------|
-| 6 | `Pydantic` 数据模型 | 定义工具参数、结构化输出 | [04_pydantic_demo.py](python_practice/04_pydantic_demo.py) | ⬜ |
-| 7 | 生成器表达式 `(x for x in d)` | 大向量库惰性处理，省内存 | [05_generator_expr.py](python_practice/05_generator_expr.py) | ⬜ |
+| 6 | `Pydantic` 数据模型 | 定义工具参数、结构化输出 | [04_pydantic_demo.ipynb](python_practice/04_pydantic_demo.ipynb) | ⬜ |
+| 7 | 生成器表达式 `(x for x in d)` | 大向量库惰性处理，省内存 | [05_generator_expr.ipynb](python_practice/05_generator_expr.ipynb) | ⬜ |
 | 8 | `enumerate` / `zip` / `dict.get` | 数据处理瑞士军刀 | 项目里零散使用 | ✅ |
 
 ## ⬜ 可以跳过（投入产出比低，面试几乎不问）
